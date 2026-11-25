@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKY LIVE • Painel</title>
+<style>
+:root{--bg:#04070f;--card:rgba(15,24,42,.78);--line:rgba(130,175,255,.14);--line2:rgba(130,175,255,.26);--text:#eef4ff;--muted:#93a7c9;--blue:#3b82f6;--cyan:#5ee7ff;--green:#42e0a0;--red:#ff6b86}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);font-family:"Inter","Segoe UI Variable","Segoe UI",system-ui,Roboto,Arial,sans-serif;padding:28px 20px 70px;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1000px 560px at 88% -12%,rgba(37,99,235,.22),transparent 60%),radial-gradient(900px 500px at -8% 6%,rgba(94,231,255,.08),transparent 60%),radial-gradient(700px 400px at 50% 110%,rgba(180,156,255,.07),transparent 60%),var(--bg)}
+main{max-width:1280px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-bottom:24px;padding:18px 22px;border-radius:20px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(12px);box-shadow:0 20px 50px -20px rgba(0,0,0,.6)}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#ffffff,#8fc8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub-title{color:var(--muted);font-size:13px;margin-top:5px}
+.status{display:inline-flex;align-items:center;gap:9px;padding:9px 16px;border-radius:999px;background:rgba(255,107,134,.1);color:#ffb3c1;border:1px solid rgba(255,107,134,.3);font-size:13px;font-weight:600;transition:all .4s}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.status.on{background:rgba(66,224,160,.1);color:var(--green);border-color:rgba(66,224,160,.35)}
+.status.on::before{box-shadow:0 0 12px var(--green);animation:blink 1.8s infinite}
+@keyframes blink{50%{opacity:.3}}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:20px;align-items:start}
+.col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:1040px){.layout{grid-template-columns:1fr}.preview{order:-1}}
+@media (max-width:640px){.col{grid-template-columns:1fr}}
+.wide{grid-column:1/-1}
+.preview{position:sticky;top:20px}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 16px 40px -18px rgba(0,0,0,.55);backdrop-filter:blur(10px);transition:border-color .3s,transform .3s,box-shadow .3s}
+section:hover{border-color:var(--line2);transform:translateY(-1px);box-shadow:0 22px 50px -18px rgba(0,0,0,.6)}
+h2{margin:0 0 14px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);font-weight:700;display:flex;align-items:center;gap:9px}
+h2::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--cyan);box-shadow:0 0 10px var(--cyan);transform:rotate(45deg)}
+.row{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:9px}
+button{cursor:pointer;font:inherit;font-size:13.5px;font-weight:600;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:12px;padding:10px 15px;transition:background .18s,border-color .18s,transform .08s,box-shadow .25s}
+button:hover{background:rgba(94,231,255,.1);border-color:rgba(94,231,255,.4)}
+button:active{transform:scale(.97)}
+button.primary{background:linear-gradient(135deg,#2563eb,#3b82f6);border-color:transparent;color:#fff;box-shadow:0 8px 22px -6px rgba(37,99,235,.6)}
+button.primary:hover{box-shadow:0 10px 28px -6px rgba(37,99,235,.8);background:linear-gradient(135deg,#1d4ed8,#2563eb)}
+button.live{background:linear-gradient(135deg,#e11d48,#fb7185);border-color:transparent;color:#fff;box-shadow:0 8px 22px -6px rgba(225,29,72,.6)}
+button.danger{background:rgba(255,107,134,.08);border-color:rgba(255,107,134,.35);color:#ffb8c6}
+button.danger:hover{background:rgba(255,107,134,.18)}
+input,textarea,select{font:inherit;font-size:14px;color:var(--text);background:rgba(4,8,18,.7);border:1px solid var(--line);border-radius:12px;padding:11px 13px;flex:1 1 160px;min-width:0;outline:none;transition:border-color .2s,box-shadow .2s}
+select{cursor:pointer}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(59,130,246,.18)}
+input::placeholder,textarea::placeholder{color:#4f6287}
+textarea{width:100%;min-height:72px;resize:vertical;margin-bottom:9px}
+input[type=number]{flex:0 0 130px}
+label{display:inline-flex;align-items:center;gap:9px;color:var(--muted);font-size:13.5px;cursor:pointer}
+label input{flex:0 0 auto;width:18px;height:18px;margin:0;accent-color:#3b82f6}
+small{color:var(--muted);font-size:12.5px;line-height:1.55;display:block;margin-top:10px}
+.prevLabel{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:var(--muted);font-size:12px;letter-spacing:.06em}
+.prevLabel b{color:var(--text);font-size:12px;letter-spacing:.2em}
+.prevBox{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid var(--line2);background:#02040a;box-shadow:0 30px 60px -20px rgba(0,0,0,.7),0 0 0 6px rgba(255,255,255,.02)}
+.prevBox iframe{position:absolute;left:0;top:0;width:1280px;height:720px;border:0;transform-origin:0 0;pointer-events:none}
+.media{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 4px}
+.mediaBox{display:flex;flex-direction:column;gap:9px;align-items:flex-start;padding:14px;border-radius:14px;border:1px dashed var(--line2);background:rgba(4,8,18,.5)}
+.fileBtn{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.04);cursor:pointer;font-weight:600;font-size:13.5px;color:var(--text)}
+.fileBtn:hover{background:rgba(94,231,255,.1)}
+.thumb{width:100%;max-height:120px;object-fit:cover;border-radius:12px;border:1px solid var(--line2)}
+audio{width:100%;height:36px}
+button.ghost{font-size:12px;padding:7px 11px;background:transparent;color:var(--muted)}
+.hidden{display:none!important}
+@media (max-width:640px){.media{grid-template-columns:1fr}}
+.toast{position:fixed;bottom:24px;right:24px;padding:13px 18px;border-radius:14px;background:rgba(21,36,63,.96);border:1px solid var(--line2);color:var(--text);font-size:14px;box-shadow:0 18px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(12px) scale(.97);transition:opacity .3s,transform .5s cubic-bezier(.16,1,.3,1);pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:none}
+select option{background:#0b1426;color:#eef4ff}
+</style></head>
+<body><main>
+<header>
+  <div>
+    <h1>SKY LIVE — Painel</h1>
+    <div class="sub-title">Controle da transmissão demonstrativa • Alertas de donate fictícios</div>
+  </div>
+  <span class="status" id="status">Live não conectada</span>
+</header>
+
+<div class="layout">
+<div>
+<div class="col">
+
+<section class="wide"><h2>Estado da live</h2>
+  <div class="row">
+    <button onclick="setScreen('starting')">Vai começar</button>
+    <button class="live" onclick="setScreen('live')">● Ao vivo</button>
+    <button onclick="setScreen('break')">Intervalo</button>
+    <button onclick="setScreen('repair')">Reparos</button>
+    <button class="danger" onclick="setScreen('end')">Encerrar</button>
+  </div>
+  <textarea id="message" placeholder="Mensagem personalizada (opcional)"></textarea>
+  <div class="row"><button onclick="setScreen('custom')">Exibir mensagem</button></div>
+  <div class="row">
+    <input id="topicIn" placeholder="Tema da live (ex. Jogando Roblox)" onkeydown="if(event.key==='Enter')setTopic()">
+    <button onclick="setTopic()">Atualizar tema</button>
+    <button onclick="setTopic(true)" class="ghost">Remover tema</button>
+  </div>
+</section>
+
+<section><h2>Cronômetro para início</h2>
+  <div class="row">
+    <input id="minutes" type="number" min="1" max="600" value="5" placeholder="Minutos">
+    <button class="primary" onclick="startCountdown()">Iniciar</button>
+    <button class="danger" onclick="cancelCountdown()">Cancelar</button>
+  </div>
+  <small>Nos últimos 10 segundos a live toca um aviso e, ao zerar, um sinal.</small>
+</section>
+
+<section><h2>Meta de arrecadação</h2>
+  <div class="row">
+    <input id="goalTitle" placeholder="Nome da meta (ex. Novo equipamento)">
+    <input id="goalTarget" type="number" min="1" placeholder="Valor (ex. 500)">
+  </div>
+  <div class="row">
+    <button class="primary" onclick="setGoal()">Salvar meta</button>
+    <button class="danger" onclick="resetDonors()">Zerar doações</button>
+  </div>
+</section>
+
+<section class="wide"><h2>Donate fictício</h2>
+  <div class="row">
+    <button onclick="donate(true)">Donate ON</button>
+    <button onclick="donate(false)">Donate OFF</button>
+    <input id="donateMsg" placeholder="Mensagem ON/OFF" onkeydown="if(event.key==='Enter')saveDonateMsg()">
+    <button onclick="saveDonateMsg()">Salvar mensagem</button>
+  </div>
+  <div class="row">
+    <input id="donor" placeholder="Nome do doador">
+    <input id="amount" placeholder="Valor fictício (ex. 5 ou 12,50)">
+    <input id="donationText" placeholder="Mensagem" onkeydown="if(event.key==='Enter')alertDonate()">
+    <button class="primary" onclick="alertDonate()">Enviar alerta</button>
+  </div>
+  <div class="media">
+    <div class="mediaBox">
+      <label class="fileBtn">🖼️ Enviar imagem<input type="file" id="donImg" accept="image/*" hidden></label>
+      <img id="imgPrev" class="thumb hidden" alt="Prévia da imagem">
+      <button type="button" class="ghost" id="imgClear" onclick="clearImage()">Remover imagem</button>
+    </div>
+    <div class="mediaBox">
+      <button type="button" id="recBtn" onclick="toggleRec()">🎙️ Gravar voz</button>
+      <audio id="recPrev" controls class="hidden"></audio>
+      <button type="button" class="ghost" id="recClear" onclick="clearRec()">Apagar gravação</button>
+    </div>
+  </div>
+  <small>Digite só o número (ex.: 5 ou 12,50) que o sistema coloca em reais sozinho. O alerta aparece na live, é lido em voz alta e entra no painel de doações do canto. Cancelar alerta e remover o último donate ficam no botão ⚙ da live (ou com Esc e M).</small>
+</section>
+
+<section class="wide"><h2>Texto de rodapé</h2>
+  <div class="row">
+    <input id="ticker" placeholder="Texto que aparece na faixa" onkeydown="if(event.key==='Enter')sendTicker()">
+    <button class="primary" onclick="sendTicker()">Atualizar</button>
+  </div>
+</section>
+
+<section class="wide"><h2>Efeitos ao vivo</h2>
+  <div class="row">
+    <button onclick="effect('flash')">📸 Flash</button>
+    <button onclick="effect('violet')">💜 Explosão roxa</button>
+    <button onclick="effect('gold')">✨ Chuva dourada (doação grande)</button>
+  </div>
+  <small>Doações a partir de R$ 20 ganham explosão roxa; a partir de R$ 50, chuva dourada e tremor de tela. Estes botões testam os efeitos na live.</small>
+</section>
+
+<section class="wide"><h2>Música por etapa</h2>
+  <div class="row">
+    <button onclick="music('starting')">🎵 Prévia: Início</button>
+    <button onclick="music('repair')">🔧 Prévia: Reparos</button>
+    <button onclick="music('end')">🌙 Prévia: Encerramento</button>
+    <button class="danger" onclick="music('stop')">Parar música</button>
+  </div>
+  <small>A música muda sozinha conforme a tela: início, reparos e encerramento têm trilhas próprias. Ao vivo e intervalo ficam em silêncio.</small>
+</section>
+
+<section class="wide"><h2>Vozes do donate</h2>
+  <div class="row">
+    <select id="profileSel" onchange="saveVoice()" aria-label="Personagem da voz"></select>
+    <select id="voiceSel" onchange="saveVoice()" aria-label="Voz instalada"></select>
+  </div>
+  <div class="row">
+    <label><input type="checkbox" id="voiceRandom" onchange="saveVoice()"> Trocar de personagem a cada doação</label>
+    <button onclick="testVoice()">🗣️ Testar voz</button>
+  </div>
+  <small>Cada personagem usa uma voz em português instalada no computador (se houver mais de uma) e também tom e ritmo próprios. Com só uma voz instalada, os personagens diferem apenas no tom. Para vozes realmente diferentes, instale mais vozes em português no sistema.</small>
+</section>
+
+<section class="wide"><h2>Som e conexão</h2>
+  <div class="row">
+    <button onclick="testSound()">🔊 Testar bipe</button>
+    <button class="primary" onclick="window.open('live.html','_blank')">Abrir live em tela cheia ↗</button>
+  </div>
+  <small>Na live, use as setas ← e → do teclado para trocar de tela. O som da live só toca depois de clicar em "Ativar som" na tela da live (exigência dos navegadores).</small>
+</section>
+
+</div>
+</div>
+
+<aside class="preview">
+  <div class="prevLabel"><b>PRÉVIA DA LIVE</b><span>sem som</span></div>
+  <div class="prevBox" id="prevBox"><iframe id="prevFrame" src="live.html?preview=1" title="Prévia da live" tabindex="-1"></iframe></div>
+  <small>A prévia mostra o que o público vê. Os controles do operador e o som ficam só na live aberta.</small>
+</aside>
+</div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const channel = new BroadcastChannel('sky-live-control');
+const $ = id => document.getElementById(id);
+const STATE_KEY = 'sky-live-last', VOICE_KEY = 'sky-live-voice';
+const STATE_TYPES = ['screen', 'donate', 'donateMsg', 'ticker', 'goal', 'countdown', 'topic'];
+const PROFILE_NAMES = ['Sky (padrão)', 'Narrador', 'Animada', 'Robô', 'Sussurro'];
+let lastPong = 0;
+
+function lastOf(type) { try { return (JSON.parse(localStorage.getItem(STATE_KEY) || '{}'))[type]; } catch { return undefined; } }
+function toast(text) {
+  const t = $('toast'); t.textContent = text; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function send(data, msg = 'Enviado') {
+  channel.postMessage(data);
+  if (STATE_TYPES.includes(data.type)) {
+    try {
+      const last = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+      last[data.type] = data;
+      localStorage.setItem(STATE_KEY, JSON.stringify(last));
+    } catch {}
+  }
+  toast(msg);
+}
+function setScreen(screen) {
+  const data = { type: 'screen', screen, message: $('message').value };
+  if (screen === 'live') {
+    const prev = lastOf('screen');
+    data.startedAt = prev && prev.screen === 'live' && prev.startedAt ? prev.startedAt : Date.now();
+  }
+  send(data);
+}
+function donate(on) { send({ type: 'donate', on, message: $('donateMsg').value }); }
+function saveDonateMsg() { send({ type: 'donateMsg', message: $('donateMsg').value }); }
+function normAmount(v) {
+  const t = String(v || '').trim();
+  if (!t) return '—';
+  if (/^\d+([.,]\d{1,2})?$/.test(t)) return 'R$ ' + Number(t.replace(',', '.')).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return t;
+}
+let donImage = null, recBlob = null, rec = null, recChunks = [], recStart = 0, recTimer = null;
+$('donImg').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  if (f.size > 15e6) { toast('Imagem muito grande (máx. 15 MB)'); return; }
+  const url = URL.createObjectURL(f), img = new Image();
+  img.onload = () => {
+    const k = Math.min(1, 900 / Math.max(img.width, img.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    donImage = c.toDataURL('image/jpeg', 0.86);
+    $('imgPrev').src = donImage; $('imgPrev').classList.remove('hidden');
+    URL.revokeObjectURL(url); toast('Imagem pronta');
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast('Não consegui ler essa imagem'); };
+  img.src = url;
+  e.target.value = '';
+};
+function clearImage() { donImage = null; $('imgPrev').classList.add('hidden'); $('imgPrev').removeAttribute('src'); }
+async function toggleRec() {
+  if (rec) { rec.stop(); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) { toast('Gravação não suportada neste navegador'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch { toast('Permissão de microfone negada'); return; }
+  recChunks = [];
+  rec = new MediaRecorder(stream);
+  rec.ondataavailable = e => { if (e.data.size) recChunks.push(e.data); };
+  rec.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    recBlob = new Blob(recChunks, { type: rec.mimeType || 'audio/webm' });
+    rec = null; clearInterval(recTimer);
+    const b = $('recBtn'); b.textContent = '🎙️ Gravar voz'; b.classList.remove('live');
+    const a = $('recPrev'); a.src = URL.createObjectURL(recBlob); a.classList.remove('hidden');
+    toast('Gravação pronta');
+  };
+  rec.start();
+  const b = $('recBtn'); b.classList.add('live');
+  recTimer = setInterval(() => {
+    const s = Math.floor((Date.now() - recStart) / 1000);
+    b.textContent = '■ Parar (' + s + 's)';
+    if (s >= 30 && rec) rec.stop();
+  }, 300);
+  recStart = Date.now();
+}
+function clearRec() {
+  recBlob = null; const a = $('recPrev'); a.pause(); a.removeAttribute('src'); a.classList.add('hidden');
+}
+function alertDonate() {
+  send({ type: 'alert', name: $('donor').value.trim() || 'Anônimo', amount: normAmount($('amount').value), text: $('donationText').value.trim(), image: donImage, audio: recBlob }, 'Alerta enviado');
+  clearImage(); clearRec();
+}
+function sendTicker() { send({ type: 'ticker', text: $('ticker').value.trim() }); }
+function startCountdown() {
+  const min = Math.max(1, Math.min(600, Number($('minutes').value) || 5));
+  send({ type: 'countdown', endAt: Date.now() + min * 60000 }, 'Contagem iniciada');
+}
+function cancelCountdown() { send({ type: 'countdown', endAt: null }, 'Contagem cancelada'); }
+function setGoal() {
+  const target = Number($('goalTarget').value);
+  if (!(target > 0)) { toast('Informe um valor para a meta'); return; }
+  send({ type: 'goal', title: $('goalTitle').value.trim(), target }, 'Meta salva');
+}
+function resetDonors() {
+  if (confirm('Zerar o painel de doações da live?')) send({ type: 'resetDonors' }, 'Doações zeradas');
+}
+function setTopic(clear) { const t = clear ? '' : $('topicIn').value.trim(); send({ type: 'topic', text: t }, t ? 'Tema atualizado' : 'Tema removido'); }
+function effect(kind) { send({ type: 'effect', kind }, 'Efeito enviado'); }
+function music(mode) { send({ type: 'music', mode }, mode === 'stop' ? 'Música parada' : 'Prévia enviada'); }
+function testSound() { send({ type: 'sound', kind: 'test' }, 'Bipe enviado'); }
+function testVoice() { send({ type: 'sound', kind: 'voice' }, 'Voz enviada'); }
+
+function savedVoice() { try { return JSON.parse(localStorage.getItem(VOICE_KEY) || '{}'); } catch { return {}; } }
+function fillVoices() {
+  const cfg = savedVoice();
+  const pSel = $('profileSel');
+  pSel.replaceChildren(...PROFILE_NAMES.map((n, i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = (i + 1) + '. ' + n; return o; }));
+  pSel.value = String(cfg.profile || 0);
+  const vSel = $('voiceSel');
+  if ('speechSynthesis' in window) {
+    const list = speechSynthesis.getVoices().filter(v => /^pt/i.test(v.lang));
+    vSel.replaceChildren();
+    const add = (value, label) => { const o = document.createElement('option'); o.value = value; o.textContent = label; vSel.append(o); };
+    if (!list.length) add('', 'Voz padrão do navegador');
+    list.forEach(v => add(v.name, v.name + ' (' + v.lang + ')'));
+    vSel.value = cfg.name && list.some(v => v.name === cfg.name) ? cfg.name : vSel.options[0].value;
+  }
+  $('voiceRandom').checked = !!cfg.random;
+}
+function saveVoice() {
+  const cfg = { name: $('voiceSel').value, profile: Number($('profileSel').value) || 0, random: $('voiceRandom').checked };
+  localStorage.setItem(VOICE_KEY, JSON.stringify(cfg));
+  send({ type: 'voice', ...cfg }, 'Voz atualizada');
+}
+if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = fillVoices;
+fillVoices();
+
+/* Conexão com a live (prévia não conta como live conectada) */
+channel.onmessage = e => { if (e.data && e.data.type === 'pong') lastPong = Date.now(); };
+setInterval(() => channel.postMessage({ type: 'ping' }), 2000);
+function renderStatus() {
+  const on = Date.now() - lastPong < 5000, s = $('status');
+  s.textContent = on ? 'Live conectada' : 'Live não conectada';
+  s.classList.toggle('on', on);
+}
+renderStatus(); setInterval(renderStatus, 1000);
+
+/* Prévia escalada para caber no painel */
+function fitPreview() {
+  const box = $('prevBox'), k = box.clientWidth / 1280;
+  $('prevFrame').style.transform = 'scale(' + k + ')';
+}
+addEventListener('resize', fitPreview); fitPreview();
+</script>
+</body>
+</html>
