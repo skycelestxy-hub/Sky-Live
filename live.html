@@ -306,7 +306,7 @@ body.preview .hint{display:none}
     <div id="count">00:00</div>
   </div>
 <aside class="side" id="side">
-  <h3>DONATES FICTÍCIOS</h3>
+  <h3>DONATES REAIS</h3>
   <div class="total" id="total">R$ 0,00</div>
   <div class="stats"><span id="nDon">0 doações</span></div>
   <div class="top hidden" id="top"></div>
@@ -963,7 +963,7 @@ function nextAlert() {
   const info = el('div');
   info.append(el('h2', '', x.name || 'Anônimo'), el('div', 'amt', fmtAmount(x.amount)));
   head.append(av, info);
-  const parts = [el('div', 'tag', 'DONATE FICTÍCIO')];
+  const parts = [el('div', 'tag', 'DONATE REAL')];
   if (x.image) { const im = el('img', 'donImg'); im.src = x.image; im.alt = ''; parts.push(im); }
   parts.push(head);
   if (x.text) parts.push(el('p', '', x.text));
