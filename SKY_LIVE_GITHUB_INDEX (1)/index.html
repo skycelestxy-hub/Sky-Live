@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKY LIVE • Painel</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080b14;color:#eaf1ff;font-family:Arial,sans-serif;padding:24px}
+main{max-width:900px;margin:auto}
+h1{color:#68a7ff;margin:0 0 4px}
+h2{margin:0 0 12px;font-size:20px}
+section{background:#121a2b;border:1px solid #263653;border-radius:16px;padding:20px;margin:14px 0}
+button,input,textarea{background:#1c2940;color:#fff;border:1px solid #354967;border-radius:9px;padding:12px;margin:5px;font:inherit}
+button{cursor:pointer}
+button:hover{background:#31527b}
+button.ok{background:#1d4d35;border-color:#2f7a52}
+input,textarea{max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row input{flex:1 1 180px}
+textarea{width:100%;min-height:70px}
+small{color:#9bb2d4}
+.status{display:inline-block;padding:6px 12px;border-radius:20px;background:#2a1a1a;color:#ff8a8a;border:1px solid #5a2a2a;font-size:14px}
+.status.on{background:#133423;color:#7ef0a8;border-color:#2f7a52}
+.toast{position:fixed;bottom:20px;right:20px;background:#1c2940;border:1px solid #354967;border-radius:10px;padding:12px 16px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+</style></head>
+<body><main>
+<h1>SKY LIVE — Painel</h1>
+<small>Controle da transmissão demonstrativa • Alertas de donate fictícios</small>
+<p><span class="status" id="status">● Live não conectada</span>
+<small>Abra a live em outra aba do mesmo navegador.</small></p>
+
+<section><h2>Estado da live</h2>
+<div class="row">
+  <button onclick="setScreen('starting')">A live já vai começar</button>
+  <button onclick="setScreen('live')">Estamos ao vivo</button>
+  <button onclick="setScreen('break')">Intervalo</button>
+  <button onclick="setScreen('repair')">Manutenção</button>
+  <button onclick="setScreen('end')">Encerrar</button>
+</div>
+<textarea id="message" placeholder="Mensagem personalizada (opcional)"></textarea>
+<button onclick="setScreen('custom')">Exibir mensagem</button>
+</section>
+
+<section><h2>Donate fictício</h2>
+<div class="row">
+  <button onclick="donate(true)">Donate ON</button>
+  <button onclick="donate(false)">Donate OFF</button>
+</div>
+<div class="row">
+  <input id="donateMsg" placeholder="Mensagem ON/OFF" onkeydown="if(event.key==='Enter')saveDonateMsg()">
+  <button onclick="saveDonateMsg()">Salvar mensagem</button>
+</div>
+<div class="row">
+  <input id="donor" placeholder="Nome do doador">
+  <input id="amount" placeholder="Valor fictício (ex. R$ 5)">
+  <input id="donationText" placeholder="Mensagem" onkeydown="if(event.key==='Enter')alertDonate()">
+  <button onclick="alertDonate()">Enviar alerta</button>
+</div>
+</section>
+
+<section><h2>Texto de rodapé</h2>
+<div class="row">
+  <input id="ticker" placeholder="Texto que aparece na faixa" onkeydown="if(event.key==='Enter')sendTicker()">
+  <button onclick="sendTicker()">Atualizar</button>
+</div>
+</section>
+
+<section><h2>Som e conexão</h2>
+<div class="row">
+  <button onclick="testSound()">🔊 Testar som na live</button>
+  <button onclick="window.open('live.html','_blank')">Abrir Live</button>
+</div>
+<small>O som da live só toca depois de clicar em "Ativar som" na tela da live (exigência dos navegadores).</small>
+</section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const channel = new BroadcastChannel('sky-live-control');
+const $ = id => document.getElementById(id);
+const STATE_KEY = 'sky-live-last';
+const STATE_TYPES = ['screen', 'donate', 'donateMsg', 'ticker'];
+let lastPong = 0;
+
+function toast(text) {
+  const t = $('toast'); t.textContent = text; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function send(data) {
+  channel.postMessage(data);
+  if (STATE_TYPES.includes(data.type)) {
+    try {
+      const last = JSON.parse(localStorage.getItem(STATE_KEY) || '{}');
+      last[data.type] = data;
+      localStorage.setItem(STATE_KEY, JSON.stringify(last));
+    } catch {}
+  }
+  toast('Enviado');
+}
+function setScreen(screen) { send({ type: 'screen', screen, message: $('message').value }); }
+function donate(on) { send({ type: 'donate', on, message: $('donateMsg').value }); }
+function saveDonateMsg() { send({ type: 'donateMsg', message: $('donateMsg').value }); }
+function alertDonate() {
+  send({ type: 'alert', name: $('donor').value.trim() || 'Anônimo', amount: $('amount').value.trim() || '—', text: $('donationText').value.trim() });
+}
+function sendTicker() { send({ type: 'ticker', text: $('ticker').value.trim() }); }
+function testSound() { send({ type: 'sound', kind: 'test' }); }
+
+channel.onmessage = e => { if (e.data && e.data.type === 'pong') lastPong = Date.now(); };
+setInterval(() => channel.postMessage({ type: 'ping' }), 2000);
+function renderStatus() {
+  const on = Date.now() - lastPong < 5000;
+  const s = $('status');
+  s.textContent = on ? '● Live conectada' : '● Live não conectada';
+  s.classList.toggle('on', on);
+}
+renderStatus(); setInterval(renderStatus, 1000);
+</script>
+</body>
+</html>
